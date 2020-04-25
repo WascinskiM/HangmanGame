@@ -1,0 +1,292 @@
+#!/bin/bash
+
+
+#Wylosowanie słowa z polskiego słownika
+dictionary=$(shuf -n 1 /usr/share/dict/polish)
+
+var="${dictionary}"
+
+#Stworzenie zmiennych
+hp=5
+goodPassword=0
+goodLetter=0
+array=()
+code=()
+mistakes=()
+state=1
+length=${#dictionary}
+fail=0
+wsk=0
+
+
+#Rysowanie postaci w funkcji
+function fail()
+{
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo ""
+echo "||||||||||"
+
+}
+function fail1()
+{
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||||||||||"
+}
+
+function fail2()
+{
+echo "|||||||||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||||||||||"
+}
+function fail3()
+{
+echo "|||||||||"
+echo "|| / "
+echo "||/ "
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||||||||||"
+}
+function fail4()
+{
+echo "|||||||||"
+echo "|| /    |"
+echo "||/     |"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||||||||||"
+}
+function fail5()
+{
+echo "|||||||||"
+echo "|| /   \|"
+echo "||/     |"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||"
+echo "||||||||||"
+}
+function fail6()
+{
+echo "|||||||||"
+echo "|| /   \|"
+echo "||/     |"
+echo "||"
+echo "||"
+echo "||"
+echo "|||"
+echo "||||"
+echo "|||||"
+echo "||||||||||"
+}
+function fail7()
+{
+echo "|||||||||"
+echo "|| /   \|"
+echo "||/     |"
+echo "||      O"
+echo "||      |"
+echo "||      |"
+echo "|||"
+echo "||||"
+echo "|||||"
+echo "||||||||||"
+}
+function fail8()
+{
+echo "|||||||||"
+echo "|| /   \|"
+echo "||/     |"
+echo "||      O"
+echo "||     \|/"
+echo "||      |"
+echo "|||     "
+echo "||||"
+echo "|||||"
+echo "||||||||||"
+}
+function fail9()
+{
+echo "|||||||||"
+echo "|| /   \|"
+echo "||/     |"
+echo "||      O"
+echo "||     \|/"
+echo "||      |"
+echo "|||    / "
+echo "||||"
+echo "|||||"
+echo "||||||||||"
+}
+function fail10()
+{
+echo "##################GAME OVER#######################"
+echo "#|||||||||				         #"
+echo "#|| /   \|                                       #"
+echo "#||/     |                                       #"
+echo "#||      O                                       #"
+echo "#||     \|/                                      #"
+echo "#||      |                                       #"
+echo "#|||    / \                                      #"
+echo "#||||                                            #"
+echo "#|||||                                           #"
+echo "#||||||||||                                      #"
+echo "##################GAME OVER#######################"
+
+
+#Zapisanie wylosowanego słowa do tablicy
+}
+
+	for((i=0;$i<=${#dictionary};i++)) do
+
+		array[$i]=${var:i:1}
+
+	done
+
+#Stworzenie "zahaszowanego" słowa
+
+
+	for((i=0;$i<${#dictionary};i++)) do
+
+		code[$i]="#"
+
+	done
+
+#Wyświetlenie "zahaszowanego" słowa
+
+
+
+	while [ $state == 1 ]
+	do
+		
+		#Sprawdzenie czy użytkownik odgadł wszystkie literki
+		
+		if [ $goodLetter = $length ];
+		then
+				
+			echo "Brawo, odgadleś słowo!"
+			break
+		fi
+	
+		#Komunikaty dla użytkownika
+		echo " "
+		echo " "
+		echo " "
+		echo "Błędne literki: "
+		#Wyświetlenie  złych literek wprowadzonych przez użytkownika
+		echo ${mistakes[@]}
+		echo "Twoje słowo: "
+		echo ${code[@]}
+		echo "Podaj jedną literkę: "
+		#Wprowadzenie przez użytkownika literki
+		read letter
+		badCounter=0;
+
+
+		#Sprawdzenie czy letter jest  w słowie
+		for(( i=0;$i<=${#dictionary}-1;i++ )) do
+
+			if [ $letter = "${array[$i]}" ]
+			then
+			
+			goodLetter=`expr $goodLetter + 1`
+			#Zastąpenie "hasza" literką którą odgadł użytkownik
+			code[i]=$letter
+
+			fi
+		
+		
+		done
+
+		#Sprawdzenie czy letter jest w słowie
+		for(( i=0;$i<=${#dictionary}-1;i++ )) do
+
+			if [ $letter != "${array[$i]}" ]; 
+			then
+			badCounter=`expr $badCounter + 1`
+			fi
+		done
+		
+		#Komunikat po wpisaniu złej literki
+
+		if [ $badCounter = $length ];
+		then
+			mistakes[wsk]=$letter
+			wsk=`expr $wsk + 1 `
+			echo "Błąd! Podałeś złą literke"
+			
+			#Wywoływanie w case funkcji odpowiedzialnej za rysowanie Wisielca
+			case "$fail" in
+			"0")  fail;;
+			"1") fail1 ;;
+			"2") fail2;;
+			"3") fail3;;
+			"4") fail4;;
+			"5") fail5;;
+			"6") fail6;;
+			"7") fail7;;
+			"8") fail8;;
+			"9") fail9;;
+			"10") fail10;;
+			esac			
+			fail=`expr $fail + 1`
+
+						
+		fi
+
+		#Koniec gry po zrobieniu 10-go błedu
+
+		if [ $fail == 11 ];
+			then
+			  break
+			fi
+
+
+		#Komunikat po wpisaniu dobrej literki
+
+		if [ $badCounter != $length ];
+		then
+				
+		echo "Brawo! Odgadłeś literkę!"
+		
+		fi
+
+
+	done
+	echo "Koniec gry"
+
+
